@@ -43,7 +43,7 @@ A 0
 >> C
 B 1
 ```
-... etc.<br>
+... etc.<br><br>
 10. You can then enter test strings to see if they reach the final state.
 ```
 >> 10
