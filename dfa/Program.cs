@@ -4,59 +4,74 @@
 using System;
 using System.Collections.Generic;
 
-public class HelloWorld
+public class FA
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("Enter the number of states");
-        string statesCount = Console.ReadLine();
-        List <string> states = new();
-        Console.WriteLine("Enter the states");
-        for (int i = 0; i < int.Parse(statesCount); i++) {
-            string state = Console.ReadLine();
-            states.Add(state);
-        }
-        Console.WriteLine("Enter the initial state");
-        string firstState = Console.ReadLine();
-        Console.WriteLine("Enter the final state");
-        string finalState = Console.ReadLine();
-        Console.WriteLine("Enter the number of keys");
-        string keysCount = Console.ReadLine();
-        List <string> keys = new();
-        Console.WriteLine("Enter the keys");
-        for (int i = 0; i < int.Parse(keysCount); i++) {
-            string key = Console.ReadLine();
-            keys.Add(key);
-        }
+        Console.WriteLine("Choose what you want to do:");
+        Console.WriteLine("1. Test your DFA");
+        Console.WriteLine("2. Convert your NFA to DFA and test it");
+        string? command = Console.ReadLine();
+        if (command == "1") {
+            Console.WriteLine("Enter the number of states");
+            string? statesCount = Console.ReadLine();
+            List <string> states = new();
+            Console.WriteLine("Enter the states");
+            if (statesCount == null) throw new ArgumentNullException(nameof(statesCount));
+            for (int i = 0; i < int.Parse(statesCount); i++) {
+                string? state = Console.ReadLine();
+                if (state == null) throw new ArgumentNullException(nameof(state));
+                states.Add(state);
+            }
+            Console.WriteLine("Enter the initial state");
+            string? firstState = Console.ReadLine();
+            Console.WriteLine("Enter the final state");
+            string? finalState = Console.ReadLine();
+            Console.WriteLine("Enter the number of keys");
+            string? keysCount = Console.ReadLine();
+            List <string> keys = new();
+            Console.WriteLine("Enter the keys");
+            if (keysCount == null) throw new ArgumentNullException(nameof(keysCount));
+            for (int i = 0; i < int.Parse(keysCount); i++) {
+                string? key = Console.ReadLine();
+                if (key == null) throw new ArgumentNullException(nameof(key));
+                keys.Add(key);
+            }
         
-        Dictionary <string, Dictionary<string, string>> adjacency = new();
-        foreach (string state in states) {
-            if (!adjacency.ContainsKey(state)) adjacency.Add(state, new Dictionary<string, string>());
-        }
-        
-        for (int j = 0; j < int.Parse(statesCount); j++) {
-            foreach (string key in keys) {
-                Console.WriteLine($"{states[j]} {key}");
-                string input = Console.ReadLine();
-                foreach (var (state, dic) in adjacency) {
-                    if (state == states[j].ToString()) {
-                        adjacency[state].Add(key.ToString(), input);
+            Dictionary <string, Dictionary<string, string>> adjacency = new();
+            foreach (string state in states) {
+                if (!adjacency.ContainsKey(state)) adjacency.Add(state, new Dictionary<string, string>());
+            }
+            
+            for (int j = 0; j < int.Parse(statesCount); j++) {
+                foreach (string key in keys) {
+                    Console.WriteLine($"{states[j]} {key}");
+                    string? input = Console.ReadLine();
+                    
+                    foreach (var (state, dic) in adjacency) {
+                        if (state == states[j].ToString()) {
+                            if (input == null) throw new ArgumentNullException(nameof(input));
+                            adjacency[state].Add(key.ToString(), input);
+                        }
                     }
                 }
             }
-        }
-        
-        foreach (var (a, b) in adjacency) {
-            Console.Write(a);
-            foreach (var c in b) Console.Write($" {c} ");
-                Console.WriteLine();
+            
+            foreach (var (a, b) in adjacency) {
+                Console.Write(a);
+                foreach (var c in b) Console.Write($" {c} ");
+                    Console.WriteLine();
+                }
+            int counter = 0;
+            while (counter < 5) {
+                Console.WriteLine("Enter test string");
+                string? test = Console.ReadLine();
+                if (test == null) throw new ArgumentNullException(nameof(test));
+                if (firstState == null) throw new ArgumentNullException(nameof(firstState));
+                if (finalState == null) throw new ArgumentNullException(nameof(finalState));
+                DFA(adjacency, test, firstState, finalState);
+                counter++;
             }
-        int counter = 0;
-        while (counter < 5) {
-            Console.WriteLine("Enter test string");
-            string test = Console.ReadLine();
-            DFA(adjacency, test, firstState, finalState);
-            counter++;
         }
     }
     static void DFA(Dictionary <string, Dictionary<string, string>> adjacency, string input, string firstState, string finalState) {
