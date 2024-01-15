@@ -8,12 +8,8 @@ public class FA
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("Choose what you want to do:");
-        Console.WriteLine("1. Test your DFA");
-        Console.WriteLine("2. Convert your NFA to DFA and test it");
-        string? command = Console.ReadLine();
-        if (command == "1") {
-            Console.WriteLine("Enter the number of states");
+        // Uncomment this, and comment the uncommented (XD) code for the interactive testing of your DFA
+            /*Console.WriteLine("Enter the number of states");
             string? statesCount = Console.ReadLine();
             List <string> states = new();
             Console.WriteLine("Enter the states");
@@ -27,6 +23,8 @@ public class FA
             string? firstState = Console.ReadLine();
             Console.WriteLine("Enter the final state");
             string? finalState = Console.ReadLine();
+            if (finalState == null) throw new ArgumentNullException(nameof(finalState));
+            List<string> finalStates = [finalState];
             Console.WriteLine("Enter the number of keys");
             string? keysCount = Console.ReadLine();
             List <string> keys = new();
@@ -69,12 +67,41 @@ public class FA
                 if (test == null) throw new ArgumentNullException(nameof(test));
                 if (firstState == null) throw new ArgumentNullException(nameof(firstState));
                 if (finalState == null) throw new ArgumentNullException(nameof(finalState));
-                DFA(adjacency, test, firstState, finalState);
+                DFA(adjacency, test, firstState, finalStates);
                 counter++;
             }
+        }*/
+        List <string> keys = ["0", "1"];
+        Dictionary<string, Dictionary<string, List<string>>> states = new()
+        {
+            { "A", new Dictionary<string, List<string>> { { "0", ["B", "C"] }, {"1", ["A"] } } },
+            { "B", new Dictionary<string, List<string>> { { "0", [""] }, {"1", ["B"] } } },
+            { "C", new Dictionary<string, List<string>> { { "0", ["C"] }, {"1", ["C"] } } },
+        };
+        
+        //string firstState = "A";
+        string finalState = "B";
+        int statesLength = 0; 
+        
+        foreach (var (a, b) in states) {
+            Console.Write($"{a}   ");
+            statesLength++;
+            foreach (var (key, val) in b) {
+                Console.Write($"{key}: ");
+                Console.Write("[ ");
+                for (int i = 0; i < val.Count; i++) Console.Write($"{val[i]} ");
+                Console.Write("] ");
+            }
+            Console.WriteLine();
         }
+        Console.WriteLine("---------------------------");
+        var dfa = ToDFA(states, 2, keys);
+        Print(dfa, keys);
+        Console.WriteLine("---------------------------");
+        List<string> finals = ToFinalStates(dfa, finalState);
+        DFA(dfa, "011000", "A",  finals);
     }
-    static void DFA(Dictionary <string, Dictionary<string, string>> adjacency, string input, string firstState, string finalState) {
+    static void DFA(Dictionary <string, Dictionary<string, string>> adjacency, string input, string firstState, List<string> finalState) {
         string currentState = firstState;
         foreach (char c in input) {
             foreach (var (edge, key) in adjacency[currentState]) {
@@ -84,11 +111,37 @@ public class FA
                 }
             }
         }
-        if (currentState == finalState) Console.WriteLine("Yes");
+        if (finalState.Contains(currentState)) Console.WriteLine("Yes");
         else Console.WriteLine("No");
+    }
+    static List<string> ToFinalStates(Dictionary <string, Dictionary<string, string>> dfa, string finalState) {
+        List <string> finalStates = [];
+        foreach (var (key, _) in dfa) {
+            if (key.Contains(finalState)) finalStates.Add(key);
+        }
+        return finalStates;
     }
     static Dictionary <string, Dictionary<string, string>> ToDFA(Dictionary <string, Dictionary<string, List<string>>> adjacency, int statesCount, List <string> keys) {
         List <string> newStates = [];
+        
+        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        foreach (var outer in adjacency)
+        {
+            foreach (var inner in outer.Value)
+            {
+                if (inner.Value.Count == 1 && string.IsNullOrEmpty(inner.Value[0]))
+                {
+                    for (int i = 0; i < alphabet.Length; i++) {
+                        if (!adjacency.ContainsKey(alphabet[i].ToString())) {
+                            inner.Value[0] = alphabet[i].ToString();
+                            newStates.Add(alphabet[i].ToString());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         foreach (var (a, b) in adjacency) {
             foreach (var (key, val) in b) {
                 string newState = "";
@@ -97,26 +150,33 @@ public class FA
                 newStates.Add(SortString(newState));
             }
         }
+
         for (int i = 0; i < newStates.Count; i++) {
             var rev = newStates[i].ToCharArray().Reverse();
             if (!adjacency.ContainsKey(newStates[i]) && !adjacency.ContainsKey(string.Join("", rev)) && !string.IsNullOrEmpty(newStates[i])) {
                 HashSet<string> set0 = [];
                 HashSet<string> set1 = [];
+                HashSet<string> notThere = [];
                 string zeros = "";
                 string ones = "";
                 int length = newStates[i].Length;
                 for (int j = 0; j < length; j++) {
-                    var temp0 = adjacency[newStates[i][j].ToString()][keys[0]];
-                    if (!string.IsNullOrEmpty(temp0[0].Trim())) { 
-                        for (int k = 0; k < temp0.Count; k++) {
-                            set0.Add(SortString(temp0[k]));
+                    if (adjacency.ContainsKey(newStates[i][j].ToString())) {
+                        var temp0 = adjacency[newStates[i][j].ToString()][keys[0]];
+                        if (!string.IsNullOrEmpty(temp0[0].Trim())) { 
+                            for (int k = 0; k < temp0.Count; k++) {
+                                set0.Add(SortString(temp0[k]));
+                            }
                         }
-                    }
-                    var temp1 = adjacency[newStates[i][j].ToString()][keys[1]];
-                    if (!string.IsNullOrEmpty(temp1[0].Trim())) {
-                        for (int k = 0; k < temp1.Count; k++) {
-                            set1.Add(SortString(temp1[k]));
+                        var temp1 = adjacency[newStates[i][j].ToString()][keys[1]];
+                        if (!string.IsNullOrEmpty(temp1[0].Trim())) {
+                            for (int k = 0; k < temp1.Count; k++) {
+                                set1.Add(SortString(temp1[k]));
+                            }
                         }
+                    } else {
+                        set0.Add(newStates[i][j].ToString());
+                        set1.Add(newStates[i][j].ToString());
                     }
                 }
                 foreach (string el in set0) zeros += el;
@@ -138,19 +198,8 @@ public class FA
                 }
             }
         }
-        
         List<string> keysToRemove = new List<string>();
-        foreach (var outer in adjacency)
-        {
-            foreach (var inner in outer.Value)
-            {
-                if (inner.Value.Count == 1 && string.IsNullOrEmpty(inner.Value[0]))
-                {
-                    keysToRemove.Add(outer.Key);
-                    break;
-                }
-            }
-        }
+        
         foreach (string key in keysToRemove)
         {
             adjacency.Remove(key);
