@@ -1,5 +1,6 @@
 # Implementation of a DFA
 A simple implementation of a DFA, it asks the user for the number of states, the states, the initial state, the final state, the number of keys, and the keys as inputs to build an adjacency dictionary. It also takes test strings to see if they reach the final state. 
+- There’s a function that converts an NFA into a DFA, but it’s not included in the console.
 
 ## How to Run
 I’ll take a DFA that returns `Yes` when the test string starts with ‘1’;
