@@ -3,7 +3,7 @@ A simple implementation of a DFA, it asks the user for the number of states, the
 - There’s a function that converts an NFA into a DFA, but it’s not included in the console.
 
 ## How to Run
-- DFA verification: (Uncomment the first block of code and comment the rest) <br>
+- DFA verification: (Uncomment the first block of code and comment the rest) <br><br>
 I’ll take a DFA that returns `Yes` when the test string starts with ‘1’;
 ```
 A [1, B]  [0, C]
@@ -54,7 +54,7 @@ Yes
 No
 ```
 - NFA to DFA: 
-It converts an NFA to a DFA as follows: 
+It converts an NFA to a DFA as follows: <br>
 The NFA:
 ```
 A      AB       C
