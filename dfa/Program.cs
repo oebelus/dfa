@@ -80,7 +80,7 @@ public class FA
         };
         
         //string firstState = "A";
-        string finalState = "B";
+        string finalState = "C";
         int statesLength = 0; 
         
         foreach (var (a, b) in states) {
@@ -99,7 +99,8 @@ public class FA
         Print(dfa, keys);
         Console.WriteLine("---------------------------");
         List<string> finals = ToFinalStates(dfa, finalState);
-        DFA(dfa, "1", "A",  finals);
+        foreach (var el in finals) Console.WriteLine(el);
+        DFA(dfa, "11", "A",  finals);
     }
     static void DFA(Dictionary <string, Dictionary<string, string>> adjacency, string input, string firstState, List<string> finalState) {
         string currentState = firstState;
@@ -114,6 +115,8 @@ public class FA
         if (finalState.Contains(currentState)) Console.WriteLine("Yes");
         else Console.WriteLine("No");
     }
+
+    // Setting the final states
     static List<string> ToFinalStates(Dictionary <string, Dictionary<string, string>> dfa, string finalState) {
         List <string> finalStates = [];
         foreach (var (key, _) in dfa) {
@@ -121,6 +124,8 @@ public class FA
         }
         return finalStates;
     }
+
+    // NFA to DFA conversion
     static Dictionary <string, Dictionary<string, string>> ToDFA(Dictionary <string, Dictionary<string, List<string>>> adjacency, int statesCount, List <string> keys) {
         Dictionary <string, Dictionary<string, string>> dfa = [];
         Dictionary <string, Dictionary<string, string>> later = [];
@@ -233,7 +238,6 @@ public class FA
                     if (countEmpty == keys.Count) keysToRemove.Add(outer.Key);
                     else if (countEmpty > 0)
                     {
-                        Console.WriteLine($"Inner Value K empty: {outer.Value["0"]}");
                         for (int k = 0; k < keys.Count; k++) {
                             string key = keys[k];
                             if (string.IsNullOrEmpty(outer.Value[key])) {
@@ -252,7 +256,7 @@ public class FA
                         }
                     }
                 }  
-            }
+            } 
         }
 
         foreach (string key in keysToRemove)
@@ -275,6 +279,7 @@ public class FA
             dfatest.Add(outerPair.Key, innerDict);
         }
 
+        // Print out the original adjacency list
         foreach (var (a, b) in dfatest) {
             Console.Write(a);
             foreach (var (_, d) in b) Console.Write(d.PadLeft(8));
@@ -285,6 +290,8 @@ public class FA
 
         return dfa;
     }
+
+    // Print a DFA
     static void Print(Dictionary <string, Dictionary<string, string>> adjacency, List<string> keys) {
         foreach (string el in keys) {
             Console.Write(el.PadLeft(8));
@@ -296,6 +303,8 @@ public class FA
                 Console.WriteLine();
         }
     }
+
+    // Function to sort strings in ascending order
     static string SortString(string input)
     {
         char[] characters = [.. input];
