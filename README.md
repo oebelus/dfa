@@ -2,8 +2,8 @@
 A simple implementation of a DFA, it asks the user for the number of states, the states, the initial state, the final state, the number of keys, and the keys as inputs to build an adjacency dictionary. It also takes test strings to see if they reach the final state. 
 - There’s a function that converts an NFA into a DFA, but it’s not included in the console.
 
-## How to Run
-#### DFA verification: (Uncomment the first block of code and comment the rest) <br><br>
+# How to Run
+#### - DFA verification: (Uncomment the first block of code and comment the rest)
 - I’ll take a DFA that returns `Yes` when the test string starts with ‘1’;
 ```
 A [1, B]  [0, C]
@@ -53,15 +53,18 @@ Yes
 >> 0111
 No
 ```
-#### NFA to DFA: 
-It converts an NFA to a DFA as follows: <br>
-The NFA:
+### - NFA to DFA: 
+- It converts an NFA to a DFA as follows:
+
+#### - The NFA:
 ```
 A      AB       C
 B       A       B
 C              AB
 ```
-The corresponding DFA:
+*Final state(s): `["C"]`
+
+#### - The corresponding DFA:
 ```
        0       1
 A      AB      C
@@ -70,3 +73,4 @@ C      D       AB
 BC     A       AB
 D      D       D
 ```
+*Final state(s): `["C", "BC"]`
